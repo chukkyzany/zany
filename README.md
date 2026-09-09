@@ -46,14 +46,18 @@ flowchart TB
    ![ALB DNS test showing alternating instance IDs](screenshot/week-2.png)
    ![ALB DNS test showing alternating instance IDs](screenshot/week1.png)
 
+
 - ASG activity log (instance termination + replacement event)
 
    ![Replacement event](screenshot/asg-2.png)
+
    ![ASG](screenshot/asg.png)
+
 
 - Target Group health (both targets showing Healthy)
 
    ![Target group health](screenshot/test-target-group.png)
+
 
 ## What I Learned
 Built a scalable, highly available architecture with redundancy and fault tolerance across two Availability Zones — but the real value was in understanding *why* each piece works the way it does:
