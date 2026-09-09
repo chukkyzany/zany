@@ -44,18 +44,18 @@ flowchart TB
 ## Screenshots
 - ALB DNS test (curl output alternating between instance IDs)
 
-   ![ALB DNS test showing alternating instance IDs](screenshots/'week 2.png')
-   ![ALB DNS test showing alternating instance IDs](screenshots/week 1.png)
+   ![ALB DNS test showing alternating instance IDs](project/screenshots/'week 2.png')
+   ![ALB DNS test showing alternating instance IDs](project/screenshots/week 1.png)
 
 - ASG activity log (instance termination + replacement event)
 
-   ![Replacement event](screenshots/ ASG.png)*
-   ![AsG](screenshots/ 'asg 2.png')*
+   ![Replacement event](project/screenshots/ ASG.png)
+   ![AsG](project/screenshots/ 'asg 2.png')
 
 
 - Target Group health (both targets showing Healthy)
 
-   ![Target group health](screenshots/'test-target group.png')
+   ![Target group health](project/screenshots/'test-target group.png')
 
 
 ## What I Learned
