@@ -38,29 +38,31 @@ flowchart TB
 
 **Security groups:**
 - `alb-sg` — inbound HTTP (80) from `0.0.0.0/0`
-- `test-SG1` — inbound HTTP (80) from `alb-sg` only (no direct internet access to instances)
-- `test-SG2` — inbound HTTP (80) from `alb-sg` only (no direct internet access to instances) 
+- `web-sg` — inbound HTTP (80) from `alb-sg` only (no direct internet access to instances)
 
 ## Screenshots
 - ALB DNS test (curl output alternating between instance IDs)
 
-   ![ALB DNS test showing alternating instance IDs](project/screenshot/week-2.png)
-   ![ALB DNS test showing alternating instance IDs](project/screenshot/week1.png)
+   ![ALB DNS test showing alternating instance IDs](screenshot/week-2.png)
+   ![ALB DNS test showing alternating instance IDs](screenshot/week1.png)
 
 - ASG activity log (instance termination + replacement event)
 
-   ![Replacement event](project/screenshot/asg-2.png)
-   ![AsG](project/screenshot/asg.png)
-
+   ![Replacement event](screenshot/asg-2.png)
+   ![ASG](screenshot/asg.png)
 
 - Target Group health (both targets showing Healthy)
 
-   ![Target group health](project/screenshot/test-target-group.png)
-
+   ![Target group health](screenshot/test-target-group.png)
 
 ## What I Learned
-Built a scalable, highly available architecture with built-in redundancy and fault tolerance — spreading compute across two Availability Zones behind a load balancer, with an Auto Scaling Group automatically replacing unhealthy or terminated instances to keep the service running.
+Built a scalable, highly available architecture with redundancy and fault tolerance across two Availability Zones — but the real value was in understanding *why* each piece works the way it does:
+
+- **EC2 status checks ≠ ASG health checks.** EC2 status checks only confirm the instance itself is alive (VM booted, OS responding) — they know nothing about whether the app on top is actually working. ELB health checks check the real thing (a response from `/`), so if nginx crashes but the instance is technically "running," ELB health checks catch it and the ASG replaces the instance — status checks alone would've missed it.
+- **Security groups can reference other security groups, not just IP ranges.** Setting `web-sg`'s inbound rule to allow traffic from `alb-sg` (instead of a CIDR block) makes the rule identity-based rather than address-based — it doesn't matter what IP the ALB is using, anything with `alb-sg` attached is allowed in.
+- **NAT Gateways + private subnets + Session Manager form a complete pattern.** No public IP means nothing inbound from the internet, but the NAT Gateway still allows outbound access (updates, etc.). Session Manager then gives a way *in* without opening port 22 at all, using an IAM role instead of network access — outbound open, inbound closed, entry controlled through IAM rather than the network.
 
 ## Issues Faced
-- **Target Group not picking up instances:** I ran into trouble getting my EC2 instances attached to the Target Group. Resolved by working through the registration flow properly (the instances need to be explicitly registered as targets — the ALB doesn't discover them automatically).
-- **Couldn't connect to the ALB DNS name:** I was testing over HTTPS while the ALB listener was only configured for HTTP (port 80). Fixed by using `http://` instead of `https://` when testing the DNS name.
+- **Target Group not picking up instances:** ran into trouble getting my EC2 instances attached to the Target Group. Resolved by working through the registration flow properly (the instances need to be explicitly registered as targets — the ALB doesn't discover them automatically).
+- **Couldn't connect to the ALB DNS name:** was testing over HTTPS while the ALB listener was only configured for HTTP (port 80). Fixed by using `http://` instead of `https://` when testing the DNS name.
+
