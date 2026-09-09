@@ -51,7 +51,7 @@ flowchart TB
 
    ![Replacement event](screenshot/asg-2.png)
 
-   ![ASG](screenshot/asg.png)
+   ![Instance](screenshot/asg-1.png)
 
 
 - Target Group health (both targets showing Healthy)
